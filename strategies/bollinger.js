@@ -14,7 +14,10 @@ const bollinger = (klines, periods = BOLLINGER_PERIODS, times = 2) => {
 
   const { upper, lower } = boll(klines, periods, times);
 
-  return [upper[upper.length - 1], lower[lower.length - 1]]
+  return {
+    upperBand: upper[upper.length - 1], 
+    lowerBandk: lower[lower.length - 1]
+  }
 };
 
 const saveKline = (symbol, close) => {
@@ -51,7 +54,7 @@ const strategy = async (options, onSignal = (signal) => {}) => {
       const high = Number(candle.high);
       const diff = Math.abs(high / low - 1) * 100;
       const klines = saveKline(candle.symbol, Number(candle.close));
-      const [upperBand, lowerBand] = bollinger(klines);
+      const { upperBand, lowerBand } = bollinger(klines);
 
       if (diff >= percentage && upperBand < Number(candle.close)) {
         onSignal(
