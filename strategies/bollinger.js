@@ -12,9 +12,9 @@ const bollinger = (klines, periods = BOLLINGER_PERIODS, times = 2) => {
     return Infinity;
   }
 
-  const { upper } = boll(klines, periods, times);
+  const { upper, lower } = boll(klines, periods, times);
 
-  return upper[upper.length - 1];
+  return [upper[upper.length - 1], lower[lower.length - 1]]
 };
 
 const saveKline = (symbol, close) => {
@@ -51,13 +51,20 @@ const strategy = async (options, onSignal = (signal) => {}) => {
       const high = Number(candle.high);
       const diff = Math.abs(high / low - 1) * 100;
       const klines = saveKline(candle.symbol, Number(candle.close));
-      const upperBand = bollinger(klines);
+      const [upperBand, lowerBand] = bollinger(klines);
 
       if (diff >= percentage && upperBand < Number(candle.close)) {
         onSignal(
           `${candle.symbol} se ha movido un ${
             Math.round((diff + Number.EPSILON) * 100) / 100
           }% y ha cerrado por encima de la banda de bollinger`
+        );
+      }
+      if (diff >= percentage && lowerBand > Number(candle.close)) {
+        onSignal(
+          `${candle.symbol} se ha movido un ${
+            Math.round((diff + Number.EPSILON) * 100) / 100
+          }% y ha cerrado por debajo de la banda de bollinger`
         );
       }
     }

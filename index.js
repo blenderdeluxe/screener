@@ -14,6 +14,7 @@ program
     const strategy = strategies[options.strategy];
 
     console.log("Awaiting signals...");
+    notify("test");
 
     strategy(
       { interval: options.interval, percentage: options.percentage },
