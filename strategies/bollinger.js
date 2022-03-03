@@ -16,7 +16,7 @@ const bollinger = (klines, periods = BOLLINGER_PERIODS, times = 2) => {
 
   return {
     upperBand: upper[upper.length - 1], 
-    lowerBandk: lower[lower.length - 1]
+    lowerBand: lower[lower.length - 1]
   }
 };
 
